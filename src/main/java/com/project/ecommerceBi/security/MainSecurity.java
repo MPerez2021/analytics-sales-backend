@@ -14,7 +14,6 @@ import java.util.List;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class MainSecurity {
-
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.cors().configurationSource(request -> {
