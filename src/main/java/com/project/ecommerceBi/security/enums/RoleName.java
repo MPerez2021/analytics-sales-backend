@@ -1,4 +1,5 @@
 package com.project.ecommerceBi.security.enums;
 
-public enum RoleList {
+public enum RoleName {
+    ROLE_ADMIN, ROLE_CLIENT
 }

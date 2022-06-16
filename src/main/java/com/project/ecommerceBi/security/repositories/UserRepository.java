@@ -1,4 +1,11 @@
 package com.project.ecommerceBi.security.repositories;
 
-public interface UserRepository {
+import com.project.ecommerceBi.security.entities.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<User, Integer> {
+    Optional<User> findByUserNameOrEmail(String userName, String email);
+
 }

@@ -1,0 +1,43 @@
+package com.project.ecommerceBi.entities;
+
+import com.project.ecommerceBi.security.entities.User;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
+
+@Entity
+public class Sales {
+
+
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Getter @Setter
+    private String id;
+
+    @NotNull
+    @Getter @Setter
+    private Double total;
+
+    @NotNull
+    @Getter @Setter
+    private Date date;
+
+    @ManyToOne(optional = false, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+    @Getter @Setter
+    private User client;
+
+    public Sales() {
+    }
+
+    public Sales(String id, Double total, Date date, User client) {
+        this.id = id;
+        this.total = total;
+        this.date = date;
+        this.client = client;
+    }
+}
