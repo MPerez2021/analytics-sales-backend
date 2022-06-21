@@ -9,7 +9,7 @@ public class LoginUser {
 
     @NotBlank
     @Getter @Setter
-    private String userName;
+    private String email;
 
     @NotBlank
     @Getter @Setter

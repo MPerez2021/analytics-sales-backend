@@ -10,9 +10,13 @@ import com.project.ecommerceBi.security.enums.RoleName;
 import com.project.ecommerceBi.security.jwt.JwtProvider;
 import com.project.ecommerceBi.security.services.RoleService;
 import com.project.ecommerceBi.security.services.UserService;
+import com.project.ecommerceBi.security.util.CookieUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -22,6 +26,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,7 +40,7 @@ public class AuthController {
 
     private PasswordEncoder passwordEncoder;
 
-    private AuthenticationManagerBuilder authenticationManagerBuilder;
+    private AuthenticationManager authenticationManager;
 
     private UserService userService;
 
@@ -41,30 +48,33 @@ public class AuthController {
 
     private JwtProvider jwtProvider;
 
+    @Value("${jwt.accessTokenCookieName}")
+    private String cookieName;
+
     @Autowired
-    public AuthController(PasswordEncoder passwordEncoder, AuthenticationManagerBuilder authenticationManagerBuilder,
+    public AuthController(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
                           UserService userService, RoleService roleService, JwtProvider jwtProvider) {
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.roleService = roleService;
         this.jwtProvider = jwtProvider;
     }
 
 
-    @PostMapping("/login")
-    public ResponseEntity<Object> login(@Valid @RequestBody LoginUser loginUser, BindingResult bidBindingResult){
-        if(bidBindingResult.hasErrors())
-            return new ResponseEntity<>(new Message("Revise sus credenciales"), HttpStatus.BAD_REQUEST);
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> login(HttpServletResponse httpServletResponse, @Valid @RequestBody LoginUser loginUser, BindingResult bidBindingResult) {
+        if (bidBindingResult.hasErrors())
+            return new ResponseEntity<>(new Message("Revise sus credenciales 1"), HttpStatus.BAD_REQUEST);
         try {
-            UsernamePasswordAuthenticationToken authenticationToken= new UsernamePasswordAuthenticationToken(loginUser.getUserName(), loginUser.getPassword());
-            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginUser.getEmail(), loginUser.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtProvider.generateToken(authentication);
-            JwtDto jwtDto = new JwtDto(jwt);
-            return new ResponseEntity<>(jwtDto, HttpStatus.OK);
+            CookieUtil.create(httpServletResponse, cookieName, jwt, false, -1, "localhost");
+            return new ResponseEntity<>(new Message("Sesión iniciada"), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(new Message("Revise sus credenciales"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("Revise sus credenciales 2 " + e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -83,6 +93,19 @@ public class AuthController {
         user.setRoles(roles);
         userService.save(user);
         return new ResponseEntity<>(new Message("usuario creado"), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<Message> logOut(HttpServletResponse response) {
+        CookieUtil.clear(response, cookieName);
+        return new ResponseEntity<>(new Message("Sesión cerrada"), HttpStatus.OK);
+
+    }
+
+    @PreAuthorize("hasRole('ROLE_CLIENT')")
+    @GetMapping("/test")
+    public ResponseEntity<Message> logOut() {
+        return new ResponseEntity<>(new Message("Hola"), HttpStatus.OK);
     }
 
 }

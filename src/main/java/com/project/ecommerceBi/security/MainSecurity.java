@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,9 +34,6 @@ public class MainSecurity {
     @Autowired
     JwtEntryPoint jwtEntryPoint;
 
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
-
     @Bean
     public JwtTokenFilter jwtTokenFilter() {
         return new JwtTokenFilter();
@@ -46,12 +44,16 @@ public class MainSecurity {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+                    configuration.setAllowedOrigins(List.of("http://localhost"));
                     configuration.setAllowedMethods(List.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
                     configuration.setAllowCredentials(true);
                     configuration.addExposedHeader("Message");
@@ -59,12 +61,15 @@ public class MainSecurity {
                     return configuration;
                 }).and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/product/**", "/auth/register")
+                .antMatchers("/product/**",
+                        "/auth/register",
+                        "/auth/login",
+                        "/auth/logout")
                 .permitAll()
-                .anyRequest()
-                .authenticated()
+                .anyRequest().authenticated()
                 .and()
-                .exceptionHandling().authenticationEntryPoint(jwtEntryPoint).and()
+                .exceptionHandling().authenticationEntryPoint(jwtEntryPoint)
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
