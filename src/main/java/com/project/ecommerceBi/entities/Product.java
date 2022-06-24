@@ -7,6 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -33,6 +34,7 @@ public class Product {
     @NotNull
     @Getter @Setter
     private String category;
+
 
     @NotNull
     @Getter @Setter

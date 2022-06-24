@@ -22,6 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -84,12 +86,12 @@ public class AuthController {
             return new ResponseEntity<>(new Message("Revise los campos e intente nuevamente"), HttpStatus.BAD_REQUEST);
         User user = new User();
         Set<Role> roles = new HashSet<>();
+        Object[] rolesArray = newUser.getRoles().toArray();
         user.setUserName(newUser.getUserName());
         user.setEmail(newUser.getEmail());
         user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        roles.add(roleService.getByRoleName(RoleName.ROLE_CLIENT).get());
-        if (newUser.getRoles().contains("admin"))
-            roles.add(roleService.getByRoleName(RoleName.ROLE_ADMIN).get());
+        RoleName roleName = RoleName.valueOf(rolesArray[0].toString());
+        roles.add(roleService.getByRoleName(roleName).get());
         user.setRoles(roles);
         userService.save(user);
         return new ResponseEntity<>(new Message("usuario creado"), HttpStatus.CREATED);
@@ -102,10 +104,11 @@ public class AuthController {
 
     }
 
-    @PreAuthorize("hasRole('ROLE_CLIENT')")
-    @GetMapping("/test")
-    public ResponseEntity<Message> logOut() {
-        return new ResponseEntity<>(new Message("Hola"), HttpStatus.OK);
+    @GetMapping("/userDetails")
+    public Optional<User> userDetail() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userEmail = userDetails.getUsername();
+        return this.userService.getByUserEmail(userEmail);
     }
 
 }
