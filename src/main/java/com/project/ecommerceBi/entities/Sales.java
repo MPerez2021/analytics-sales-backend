@@ -25,6 +25,7 @@ public class Sales {
 
     @NotNull
     @Getter @Setter
+    @Column(columnDefinition = "DATE")
     private Date date;
 
     @ManyToOne(optional = false, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
@@ -36,6 +37,12 @@ public class Sales {
 
     public Sales(String id, Double total, Date date, User client) {
         this.id = id;
+        this.total = total;
+        this.date = date;
+        this.client = client;
+    }
+
+    public Sales(Double total, Date date, User client) {
         this.total = total;
         this.date = date;
         this.client = client;

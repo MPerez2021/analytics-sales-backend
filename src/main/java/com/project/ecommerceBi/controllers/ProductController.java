@@ -36,7 +36,7 @@ public class ProductController {
         return new ResponseEntity<>(product.get(), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/create")
     public ResponseEntity<Message> createProduct(@Valid @RequestBody Product product, BindingResult bindingResult) {
         if (bindingResult.hasErrors())

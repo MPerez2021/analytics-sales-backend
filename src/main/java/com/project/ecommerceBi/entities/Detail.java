@@ -26,12 +26,12 @@ public class Detail {
 
     @NotNull
     @Getter @Setter
-    private Integer amount;
+    private int amount;
 
     public Detail() {
     }
 
-    public Detail(String id, Product product, Sales sales, Integer amount) {
+    public Detail(String id, Product product, Sales sales, int amount) {
         this.id = id;
         this.product = product;
         this.sales = sales;

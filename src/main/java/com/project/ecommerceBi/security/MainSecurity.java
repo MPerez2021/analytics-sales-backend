@@ -61,7 +61,11 @@ public class MainSecurity {
                     return configuration;
                 }).and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/auth/register",
+                .antMatchers(
+                        "/product/**",
+                        "/sales/**",
+                        "/productDetail",
+                        "/auth/register",
                         "/auth/login",
                         "/auth/logout")
                 .permitAll()
