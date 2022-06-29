@@ -25,7 +25,7 @@ public class DetailService {
         this.detailRepository.save(detail);
     }
 
-    public List<Detail> getDetailByClientId(String saleId){
-        return this.detailRepository.findBySales_Client_Id(saleId);
+    public List<Detail> getDetailBySaleId(String saleId){
+        return this.detailRepository.findBySales_Id(saleId);
     }
 }

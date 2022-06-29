@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DetailRepository extends JpaRepository<Detail, String> {
-    List<Detail> findBySales_Client_Id(String saleId);
+    List<Detail> findBySales_Id(String saleId);
 }

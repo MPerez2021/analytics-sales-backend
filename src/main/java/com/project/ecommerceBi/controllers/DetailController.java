@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/productDetail")
+@RequestMapping("/saleDetail")
 @CrossOrigin(origins = "*")
 public class DetailController {
 
@@ -31,16 +31,11 @@ public class DetailController {
         this.userService = userService;
     }
 
-    @GetMapping("/{clientId}")
-    public ResponseEntity<Object> getDetailByClientId(@PathVariable String clientId) {
-        List<Detail> details = this.detailService.getDetailByClientId(clientId);
+    @GetMapping("/{saleId}")
+    public ResponseEntity<Object> getDetailBySaleId(@PathVariable String saleId) {
+        List<Detail> details = this.detailService.getDetailBySaleId(saleId);
         if (details.isEmpty())
             return new ResponseEntity<>(new Message("Aún no tienes compras realizadas"), HttpStatus.NOT_FOUND);
-       /* List<Object> newArray = new ArrayList<>();
-        for (Detail data : details) {
-            newArray.add(data.getProduct());
-            newArray.add(data.getAmount());
-        }*/
         return new ResponseEntity<>(details, HttpStatus.OK);
     }
 }

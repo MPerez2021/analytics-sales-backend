@@ -67,7 +67,7 @@ public class AuthController {
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> login(HttpServletResponse httpServletResponse, @Valid @RequestBody LoginUser loginUser, BindingResult bidBindingResult) {
         if (bidBindingResult.hasErrors())
-            return new ResponseEntity<>(new Message("Revise sus credenciales 1"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("Revise sus credenciales"), HttpStatus.BAD_REQUEST);
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginUser.getEmail(), loginUser.getPassword()));
@@ -76,7 +76,7 @@ public class AuthController {
             CookieUtil.create(httpServletResponse, cookieName, jwt, false, -1, "localhost");
             return new ResponseEntity<>(new Message("Sesión iniciada"), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(new Message("Revise sus credenciales 2 " + e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("Revise sus credenciales " + e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -84,14 +84,27 @@ public class AuthController {
     public ResponseEntity<Object> register(@Valid @RequestBody NewUser newUser, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return new ResponseEntity<>(new Message("Revise los campos e intente nuevamente"), HttpStatus.BAD_REQUEST);
+
+        if (this.userService.getByUserEmail(newUser.getEmail()).isPresent())
+            return new ResponseEntity<>(new Message("El usuario ya existe, intente nuevamente"), HttpStatus.BAD_REQUEST);
+
+        if (this.userService.getByUserName(newUser.getUserName()))
+            return new ResponseEntity<>(new Message("El usuario ya existe, intente nuevamente"), HttpStatus.BAD_REQUEST);
+
         User user = new User();
         Set<Role> roles = new HashSet<>();
         Object[] rolesArray = newUser.getRoles().toArray();
         user.setUserName(newUser.getUserName());
         user.setEmail(newUser.getEmail());
         user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        RoleName roleName = RoleName.valueOf(rolesArray[0].toString());
-        roles.add(roleService.getByRoleName(roleName).get());
+        if (newUser.getRoles().isEmpty()) {
+            RoleName roleName = RoleName.valueOf("ROLE_CLIENT");
+            roles.add(roleService.getByRoleName(roleName).get());
+        }
+
+        if (newUser.getRoles().contains("admin"))
+            roles.add(roleService.getByRoleName(RoleName.ROLE_ADMIN).get());
+
         user.setRoles(roles);
         userService.save(user);
         return new ResponseEntity<>(new Message("usuario creado"), HttpStatus.CREATED);

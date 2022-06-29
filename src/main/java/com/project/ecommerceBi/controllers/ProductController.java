@@ -47,7 +47,7 @@ public class ProductController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/edit/{productId}")
+    @PutMapping("/update/{productId}")
     public ResponseEntity<Message> getProductById(@PathVariable String productId, @RequestBody Product product){
         this.productService.editProduct(productId, product);
         return new ResponseEntity<>(new Message("Producto actualizado"), HttpStatus.OK);
