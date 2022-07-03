@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,11 +34,25 @@ public class SalesService {
         this.detailService = detailService;
     }
 
-    public void createSale(List<AddedToCar> products){
+    public List<Sales> getAllSales() {
+        return this.salesRepository.findAll();
+    }
+
+    public List<Sales> getByClientId(String clientId){
+        return this.salesRepository.findByClient_Id(clientId);
+    }
+
+    public void createSale(List<AddedToCar> products) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userEmail = userDetails.getUsername();
         User user = this.userService.getByUserEmail(userEmail).get();
-        double total = products.stream().mapToDouble(product -> product.getProduct().getPrice() * product.getAmount()).sum();
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        decimalFormat.setRoundingMode(RoundingMode.DOWN);
+        double total = products.stream().mapToDouble(product -> {
+            double calculateTotal = product.getProduct().getPrice() * product.getAmount();
+            return Double.parseDouble(decimalFormat.format(calculateTotal));
+        }).sum();
+
         Sales sales = new Sales(total, new Date(), user);
         Sales sales1 = this.salesRepository.save(sales);
         for (int i = 0; i < products.size(); i++) {

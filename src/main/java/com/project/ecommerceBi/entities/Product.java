@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -19,23 +21,28 @@ public class Product {
     @Getter @Setter
     private String id;
 
+    @NotBlank
     @NotNull
     @Getter @Setter
     private String name;
 
+    @DecimalMin(value = "0.1")
     @NotNull
     @Getter @Setter
     private Double price;
 
+    @NotBlank
     @NotNull
     @Getter @Setter
     private String description;
 
+    @NotBlank
     @NotNull
     @Getter @Setter
     private String category;
 
 
+    @NotBlank
     @NotNull
     @Getter @Setter
     private String image;
