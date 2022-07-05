@@ -76,7 +76,7 @@ public class AuthController {
             CookieUtil.create(httpServletResponse, cookieName, jwt, false, -1, "localhost");
             return new ResponseEntity<>(new Message("Sesión iniciada"), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(new Message("Revise sus credenciales " + e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("Revise sus credenciales"), HttpStatus.BAD_REQUEST);
         }
     }
 
