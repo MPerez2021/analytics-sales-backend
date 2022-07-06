@@ -31,8 +31,6 @@ public class ProductService {
         Product productToEdit = this.getProductById(productId).get();
         productToEdit.setCategory(product.getCategory());
         productToEdit.setDescription(product.getDescription());
-
-       // productToEdit.setPrice(Double.valueOf(decimalFormat.format(product.getPrice())));
         productToEdit.setPrice(product.getPrice());
         productToEdit.setImage(product.getImage());
         productToEdit.setName(product.getName());
@@ -52,7 +50,7 @@ public class ProductService {
     }
 
     public List<Product> getProductsByCategory(String category){
-        return this.productRepository.findFirst6AndByCategory(category);
+        return this.productRepository.findByCategory(category);
     }
 
     public List<Product> getRelatedProductsByCategory(String category, String productId){

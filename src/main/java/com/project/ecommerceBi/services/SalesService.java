@@ -36,23 +36,22 @@ public class SalesService {
         this.detailService = detailService;
         this.shoppingListService = shoppingListService;
     }
+
     public List<Sales> getAllSales() {
         return this.salesRepository.findAll();
     }
 
-    public List<Sales> getByClientId(String clientId){
+    public List<Sales> getByClientId(String clientId) {
         return this.salesRepository.findByClient_Id(clientId);
     }
 
     public void createSale(String user_mail) {
         User user = this.userService.getByUserEmail(user_mail).get();
         List<ShoppingList> products = this.shoppingListService.getListByClientMail(user.getEmail());
-        double total = products.stream().mapToDouble(product -> {
-            double doubleAmount=product.getAmount();
-            return product.getProduct().getPrice() * doubleAmount;
-        }).sum();
-
-        Sales sales = new Sales(total, new Date(), user);
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        decimalFormat.setRoundingMode(RoundingMode.DOWN);
+        double total = products.stream().mapToDouble(product -> product.getProduct().getPrice() * product.getAmount()).sum();
+        Sales sales = new Sales(Double.parseDouble(decimalFormat.format(total)), new Date(), user);
         Sales sales1 = this.salesRepository.save(sales);
         for (int i = 0; i < products.size(); i++) {
             Detail detail1 = new Detail();
