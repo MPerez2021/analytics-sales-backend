@@ -3,6 +3,9 @@ package com.project.ecommerceBi.controllers;
 import com.project.ecommerceBi.dtos.Message;
 import com.project.ecommerceBi.entities.Product;
 import com.project.ecommerceBi.services.ProductService;
+import com.univocity.parsers.common.record.Record;
+import com.univocity.parsers.csv.CsvParser;
+import com.univocity.parsers.csv.CsvParserSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,6 +82,16 @@ public class ProductController {
     public ResponseEntity<Message> getProductById(@PathVariable String productId, @RequestBody Product product){
         this.productService.editProduct(productId, product);
         return new ResponseEntity<>(new Message("Producto actualizado"), HttpStatus.OK);
+    }
+
+    @PostMapping("/uploadCsv")
+    public ResponseEntity<Message> uploadCsvFileToDataBase(@RequestParam("file") MultipartFile file) throws IOException {
+        try {
+            this.productService.uploadCsvFile(file);
+            return new ResponseEntity<>(new Message("Archivo subido con éxito"), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(new Message("No se pudo subir el archivo"), HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

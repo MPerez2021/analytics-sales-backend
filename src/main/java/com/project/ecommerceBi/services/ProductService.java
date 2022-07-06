@@ -2,10 +2,16 @@ package com.project.ecommerceBi.services;
 
 import com.project.ecommerceBi.entities.Product;
 import com.project.ecommerceBi.repositories.ProductRepository;
+import com.univocity.parsers.common.record.Record;
+import com.univocity.parsers.csv.CsvParser;
+import com.univocity.parsers.csv.CsvParserSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +41,25 @@ public class ProductService {
         productToEdit.setImage(product.getImage());
         productToEdit.setName(product.getName());
         this.productRepository.save(productToEdit);
+    }
+
+    public void uploadCsvFile(MultipartFile file) throws IOException {
+        List<Product> productsToUpload = new ArrayList<>();
+        InputStream inputStream = file.getInputStream();
+        CsvParserSettings settings = new CsvParserSettings();
+        settings.setHeaderExtractionEnabled(true);
+        CsvParser parser = new CsvParser(settings);
+        List<Record> parseAllRecords = parser.parseAllRecords(inputStream);
+        parseAllRecords.forEach(record -> {
+            Product product = new Product();
+            product.setName(record.getString("name"));
+            product.setPrice(Double.parseDouble(record.getString("price")));
+            product.setDescription(record.getString("description"));
+            product.setCategory(record.getString("category"));
+            product.setImage(record.getString("image"));
+            productsToUpload.add(product);
+        });
+        this.productRepository.saveAll(productsToUpload);
     }
 
     public List<Product> getAllProducts() {
