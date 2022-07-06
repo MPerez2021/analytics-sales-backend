@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ShoppingListRepository extends JpaRepository<ShoppingList, String> {
     List<ShoppingList> findByClient_Id(String clientId);
+    List<ShoppingList> findByClient_Email(String clientEmail);
     void deleteByClient_Id(String clientId);
     Long countByClient_Id(String clientId);
     void deleteById(String id);

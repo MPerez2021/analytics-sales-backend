@@ -4,6 +4,7 @@ import com.project.ecommerceBi.dtos.AddedToCar;
 import com.project.ecommerceBi.entities.Detail;
 import com.project.ecommerceBi.entities.Product;
 import com.project.ecommerceBi.entities.Sales;
+import com.project.ecommerceBi.entities.ShoppingList;
 import com.project.ecommerceBi.repositories.SalesRepository;
 import com.project.ecommerceBi.security.entities.User;
 import com.project.ecommerceBi.security.services.UserService;
@@ -26,14 +27,15 @@ public class SalesService {
     private final SalesRepository salesRepository;
     private final UserService userService;
     private final DetailService detailService;
+    private final ShoppingListService shoppingListService;
 
     @Autowired
-    public SalesService(SalesRepository salesRepository, UserService userService, DetailService detailService) {
+    public SalesService(SalesRepository salesRepository, UserService userService, DetailService detailService, ShoppingListService shoppingListService) {
         this.salesRepository = salesRepository;
         this.userService = userService;
         this.detailService = detailService;
+        this.shoppingListService = shoppingListService;
     }
-
     public List<Sales> getAllSales() {
         return this.salesRepository.findAll();
     }
@@ -42,15 +44,12 @@ public class SalesService {
         return this.salesRepository.findByClient_Id(clientId);
     }
 
-    public void createSale(List<AddedToCar> products) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userEmail = userDetails.getUsername();
-        User user = this.userService.getByUserEmail(userEmail).get();
-        DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        decimalFormat.setRoundingMode(RoundingMode.DOWN);
+    public void createSale(String user_mail) {
+        User user = this.userService.getByUserEmail(user_mail).get();
+        List<ShoppingList> products = this.shoppingListService.getListByClientMail(user.getEmail());
         double total = products.stream().mapToDouble(product -> {
-            double calculateTotal = product.getProduct().getPrice() * product.getAmount();
-            return Double.parseDouble(decimalFormat.format(calculateTotal));
+            double doubleAmount=product.getAmount();
+            return product.getProduct().getPrice() * doubleAmount;
         }).sum();
 
         Sales sales = new Sales(total, new Date(), user);
@@ -62,5 +61,6 @@ public class SalesService {
             detail1.setSales(sales1);
             this.detailService.createDetail(detail1);
         }
+        this.shoppingListService.cleanClientShoppingList(user.getId());
     }
 }

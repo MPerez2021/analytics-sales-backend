@@ -19,6 +19,9 @@ public class ShoppingListService {
     public List<ShoppingList> getListByClient(String clientId){
         return this.shoppingListRepository.findByClient_Id(clientId);
     }
+    public List<ShoppingList> getListByClientMail(String clientMail){
+        return this.shoppingListRepository.findByClient_Email(clientMail);
+    }
     public void cleanClientShoppingList(String clientId){
         this.shoppingListRepository.deleteByClient_Id(clientId);
     }

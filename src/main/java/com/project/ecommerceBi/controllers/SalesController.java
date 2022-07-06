@@ -44,10 +44,9 @@ public class SalesController {
         return new ResponseEntity<>(sales, HttpStatus.OK);
     }
 
-        @PostMapping("/create")
-    public ResponseEntity<Message> createSale(@RequestBody List<AddedToCar> products){
-        this.salesService.createSale(products);
-
+        @PostMapping("/create/{user_mail}")
+    public ResponseEntity<Message> createSale(@PathVariable String user_mail){
+        this.salesService.createSale(user_mail);
         return new ResponseEntity<>(new Message("Venta genereada"), HttpStatus.OK);
     }
 }

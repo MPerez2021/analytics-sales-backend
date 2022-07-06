@@ -18,7 +18,7 @@ public class ShoppingList {
     private String id;
     @NotNull
     @Getter @Setter
-    private Integer amount;
+    private int amount;
     @ManyToOne(optional = false, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
     @Getter @Setter
     private Product product;
@@ -29,7 +29,7 @@ public class ShoppingList {
     public ShoppingList() {
     }
 
-    public ShoppingList(String id, Integer amount, Product product, User client) {
+    public ShoppingList(String id, int amount, Product product, User client) {
         this.id = id;
         this.amount = amount;
         this.product = product;
