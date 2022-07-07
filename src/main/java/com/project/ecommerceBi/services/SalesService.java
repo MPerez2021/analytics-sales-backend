@@ -1,24 +1,21 @@
 package com.project.ecommerceBi.services;
 
-import com.project.ecommerceBi.dtos.AddedToCar;
 import com.project.ecommerceBi.entities.Detail;
-import com.project.ecommerceBi.entities.Product;
 import com.project.ecommerceBi.entities.Sales;
 import com.project.ecommerceBi.entities.ShoppingList;
 import com.project.ecommerceBi.repositories.SalesRepository;
 import com.project.ecommerceBi.security.entities.User;
 import com.project.ecommerceBi.security.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Locale;
 
 @Service
 @Transactional
@@ -48,7 +45,7 @@ public class SalesService {
     public void createSale(String user_mail) {
         User user = this.userService.getByUserEmail(user_mail).get();
         List<ShoppingList> products = this.shoppingListService.getListByClientMail(user.getEmail());
-        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        DecimalFormat decimalFormat = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
         decimalFormat.setRoundingMode(RoundingMode.DOWN);
         double total = products.stream().mapToDouble(product -> product.getProduct().getPrice() * product.getAmount()).sum();
         Sales sales = new Sales(Double.parseDouble(decimalFormat.format(total)), new Date(), user);
