@@ -25,7 +25,15 @@ public class DetailService {
         this.detailRepository.save(detail);
     }
 
+    public List<Detail> getDetailByCategoryName(String categoryName){
+        return this.detailRepository.findByProduct_Category(categoryName);
+    }
+
     public List<Detail> getDetailBySaleId(String saleId){
         return this.detailRepository.findBySales_Id(saleId);
+    }
+
+    public int getDetailByCategory(String categoryName){
+        return this.detailRepository.countByProduct_Category(categoryName);
     }
 }

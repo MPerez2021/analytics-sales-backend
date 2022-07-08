@@ -29,8 +29,8 @@ public class SalesController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<Object> getAllSales(){
-        List<Sales> sales =this.salesService.getAllSales();
+    public ResponseEntity<Object> getAllSales() {
+        List<Sales> sales = this.salesService.getAllSales();
         if (sales.isEmpty())
             return new ResponseEntity<>(new Message("Aún no se ha generado ninguna venta"), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(sales, HttpStatus.OK);
@@ -44,9 +44,34 @@ public class SalesController {
         return new ResponseEntity<>(sales, HttpStatus.OK);
     }
 
-        @PostMapping("/create/{user_mail}")
-    public ResponseEntity<Message> createSale(@PathVariable String user_mail){
+    @PostMapping("/create/{user_mail}")
+    public ResponseEntity<Message> createSale(@PathVariable String user_mail) {
         this.salesService.createSale(user_mail);
         return new ResponseEntity<>(new Message("Venta genereada"), HttpStatus.OK);
+    }
+
+    @GetMapping("/totalByCategory")
+    public ResponseEntity<Object> getTotalSalesByCategory(){
+        return new ResponseEntity<>(this.salesService.getTotalSalesByCategory(), HttpStatus.OK);
+    }
+
+    @GetMapping("/totalByMonthAndCategory")
+    public ResponseEntity<Object> getTotalSalesByMonthAndCategory(){
+        return new ResponseEntity<>(this.salesService.getTotalSalesPerMonthAndCategory(), HttpStatus.OK);
+    }
+
+    @GetMapping("/totalByMonth")
+    public ResponseEntity<Object> getTotalSalesByMonth(){
+        return new ResponseEntity<>(this.salesService.getTotalSalesByMonth(), HttpStatus.OK);
+    }
+
+    @GetMapping("/mostSoldProducts")
+    public ResponseEntity<Object> getMostSoldProducts(){
+        return new ResponseEntity<>(this.salesService.getMostSoldProducts(), HttpStatus.OK);
+    }
+
+    @GetMapping("/leastSoldProducts")
+    public ResponseEntity<Object> getLeastSoldProducts(){
+        return new ResponseEntity<>(this.salesService.getLeastSoldProducts(), HttpStatus.OK);
     }
 }

@@ -8,4 +8,7 @@ import java.util.Optional;
 
 public interface DetailRepository extends JpaRepository<Detail, String> {
     List<Detail> findBySales_Id(String saleId);
+    List<Detail> findByProduct_Category(String categoryName);
+    int countByProduct_Category(String categoryName);
+
 }
