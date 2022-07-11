@@ -8,6 +8,8 @@ import com.project.ecommerceBi.services.SalesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.RoundingMode;
@@ -36,11 +38,11 @@ public class SalesController {
         return new ResponseEntity<>(sales, HttpStatus.OK);
     }
 
-    @GetMapping("/client/{clientId}")
-    public ResponseEntity<Object> getByClientId(@PathVariable String clientId) {
-        List<Sales> sales = this.salesService.getByClientId(clientId);
-        if (sales.isEmpty())
-            return new ResponseEntity<>(new Message("Aún no has realizado ninguna compra"), HttpStatus.NOT_FOUND);
+    @GetMapping("/client")
+    public ResponseEntity<Object> getByClientId() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userEmail = userDetails.getUsername();
+        List<Sales> sales = this.salesService.getByClientMail(userEmail);
         return new ResponseEntity<>(sales, HttpStatus.OK);
     }
 

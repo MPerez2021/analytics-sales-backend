@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface SalesRepository extends JpaRepository<Sales, String> {
 
-    List<Sales> findByClient_Id(String clientId);
+    List<Sales> findByClient_Email(String clientMail);
 
     @Query(nativeQuery = true)
     List<SalesPerMonth> getSalesPerMonthAndCategory();

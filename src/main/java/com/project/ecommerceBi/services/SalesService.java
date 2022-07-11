@@ -39,8 +39,8 @@ public class SalesService {
         return this.salesRepository.findAll();
     }
 
-    public List<Sales> getByClientId(String clientId) {
-        return this.salesRepository.findByClient_Id(clientId);
+    public List<Sales> getByClientMail(String email) {
+        return this.salesRepository.findByClient_Email(email);
     }
 
     public void createSale(String user_mail) {
