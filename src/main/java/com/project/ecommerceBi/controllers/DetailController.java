@@ -34,8 +34,6 @@ public class DetailController {
     @GetMapping("/{saleId}")
     public ResponseEntity<Object> getDetailBySaleId(@PathVariable String saleId) {
         List<Detail> details = this.detailService.getDetailBySaleId(saleId);
-        if (details.isEmpty())
-            return new ResponseEntity<>(new Message("Aún no tienes compras realizadas"), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(details, HttpStatus.OK);
     }
 }
