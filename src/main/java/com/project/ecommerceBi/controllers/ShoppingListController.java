@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/shoppingList")
-@CrossOrigin(origins = "*")
 public class ShoppingListController {
     private final ShoppingListService shoppingListService;
     @Autowired

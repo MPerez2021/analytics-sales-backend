@@ -37,7 +37,6 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "*")
 public class AuthController {
 
     private PasswordEncoder passwordEncoder;
@@ -73,10 +72,10 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(loginUser.getEmail(), loginUser.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtProvider.generateToken(authentication);
-            CookieUtil.create(httpServletResponse, cookieName, jwt, false, -1, "localhost");
+            CookieUtil.create(httpServletResponse, cookieName, jwt, true, -1, "ecommerce.test.com");
             return new ResponseEntity<>(new Message("Sesión iniciada"), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(new Message("Revise sus credenciales"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -4,6 +4,7 @@ import com.project.ecommerceBi.security.jwt.JwtEntryPoint;
 import com.project.ecommerceBi.security.jwt.JwtTokenFilter;
 import com.project.ecommerceBi.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.CookieSameSiteSupplier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +27,7 @@ import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
 
-@Configuration
+@Configuration()
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class MainSecurity {
@@ -53,7 +54,7 @@ public class MainSecurity {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+                    configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://ecommerce.test.com"));
                     configuration.setAllowedMethods(List.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
                     configuration.setAllowCredentials(true);
                     configuration.addExposedHeader("Message");
