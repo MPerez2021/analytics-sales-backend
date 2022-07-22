@@ -4,8 +4,6 @@ import com.project.ecommerceBi.entities.Product;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 public class AddedToCar {
 
     @Getter @Setter

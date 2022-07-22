@@ -3,8 +3,6 @@ package com.project.ecommerceBi.dtos;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigInteger;
-
 public class SalesChart {
 
     @Getter @Setter

@@ -11,8 +11,6 @@ import com.project.ecommerceBi.security.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -63,20 +61,10 @@ public class SalesService {
 
     public HashMap<String, Integer> getTotalSalesByCategory() {
         HashMap<String, Integer> map = new HashMap<String, Integer>();
-        //List<SalesChart> salesCharts = new ArrayList<>();
-            /* SalesChart salesChart = new SalesChart();
-        salesChart.setName("Ropa");
-        salesChart.setTotalSales(clothes);
-        salesCharts.add(salesChart);
-        SalesChart technologyData = new SalesChart();
-        technologyData.setCategory("Tecnología");
-        technologyData.setTotalSales(technology);
-        salesCharts.add(technologyData);*/
         List<SalesChart> categories = this.salesRepository.getSalesByCategory();
         for (SalesChart category : categories) {
             map.put(category.getName(), category.getTotalSales());
         }
-
         return map;
     }
 

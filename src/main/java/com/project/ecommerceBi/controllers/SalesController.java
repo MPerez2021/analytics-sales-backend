@@ -1,8 +1,6 @@
 package com.project.ecommerceBi.controllers;
 
-import com.project.ecommerceBi.dtos.AddedToCar;
 import com.project.ecommerceBi.dtos.Message;
-import com.project.ecommerceBi.entities.Product;
 import com.project.ecommerceBi.entities.Sales;
 import com.project.ecommerceBi.services.SalesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Formatter;
 import java.util.List;
 
 @RestController

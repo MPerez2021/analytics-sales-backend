@@ -8,9 +8,12 @@ import com.project.ecommerceBi.security.entities.Role;
 import com.project.ecommerceBi.security.entities.User;
 import com.project.ecommerceBi.security.enums.RoleName;
 import com.project.ecommerceBi.security.jwt.JwtProvider;
+import com.project.ecommerceBi.security.jwt.JwtTokenFilter;
 import com.project.ecommerceBi.security.services.RoleService;
 import com.project.ecommerceBi.security.services.UserService;
 import com.project.ecommerceBi.security.util.CookieUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -72,10 +75,10 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(loginUser.getEmail(), loginUser.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtProvider.generateToken(authentication);
-            CookieUtil.create(httpServletResponse, cookieName, jwt, true, -1, "ecommerce.test.com");
+            CookieUtil.create(httpServletResponse, cookieName, jwt, false, -1, "ecommerce.test.com");
             return new ResponseEntity<>(new Message("Sesión iniciada"), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(new Message(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message("Revise sus credenciales"), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -111,6 +114,7 @@ public class AuthController {
 
     @GetMapping("/logout")
     public ResponseEntity<Message> logOut(HttpServletResponse response) {
+        SecurityContextHolder.clearContext();
         CookieUtil.clear(response, cookieName);
         return new ResponseEntity<>(new Message("Sesión cerrada"), HttpStatus.OK);
 

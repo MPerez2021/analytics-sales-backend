@@ -3,11 +3,6 @@ package com.project.ecommerceBi.dtos;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import java.math.BigInteger;
-import java.util.Date;
-import java.util.List;
-
 public class SalesPerMonth {
 
 
